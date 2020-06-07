@@ -15,6 +15,7 @@ func errorCheck(e error) {
 
 // Functions for checking ascii bounds of bytes:
 
+// Return true if byte value is an uppercase ASCII value. Else, return false.
 func isUpper(b byte) bool {
 	if b >= 65 && b <= 90 {
 		return true
@@ -22,6 +23,7 @@ func isUpper(b byte) bool {
 	return false
 }
 
+// Return true if byte value is a lowercase ASCII value. Else, return false.
 func isLower(b byte) bool {
 	if b >= 97 && b <= 122 {
 		return true
@@ -31,6 +33,7 @@ func isLower(b byte) bool {
 
 // Functions for encrypting cleartext:
 
+// Rotate byte b by value of byte r. Subtract by 26 if out of bounds.
 func rotateUpper(b, r byte) byte {
 	b = b + r
 	if b > 90 {
@@ -39,6 +42,7 @@ func rotateUpper(b, r byte) byte {
 	return b
 }
 
+// Rotate byte b by value of byte r. Subtract by 26 if out of bounds
 func rotateLower(b, r byte) byte {
 	b += r
 	if b > 122 {
@@ -47,6 +51,7 @@ func rotateLower(b, r byte) byte {
 	return b
 }
 
+// Iterate through byte slice. Perform actions if a byte is an uppercase or lowercase ASCII value.
 func encrypt(data []byte, r byte) []byte {
 	for index := range data {
 		if isUpper(data[index]) {
@@ -61,6 +66,7 @@ func encrypt(data []byte, r byte) []byte {
 
 // Functions for decrypting ciphertext.
 
+// Inverse of rotateUpper function.
 func rotateUpperDec(b, r byte) byte {
 	b -= r
 	if b < 65 {
@@ -69,6 +75,7 @@ func rotateUpperDec(b, r byte) byte {
 	return b
 }
 
+// Inverse of rotateLower function.
 func rotateLowerDec(b, r byte) byte {
 	b -= r
 	if b < 97 {
@@ -77,6 +84,7 @@ func rotateLowerDec(b, r byte) byte {
 	return b
 }
 
+// Iterate through byte slice. Perform actions if a byte is an uppercase or lowercase ASCII value.
 func decrypt(data []byte, r byte) []byte {
 	for index := range data {
 		if isUpper(data[index]) {
@@ -89,8 +97,7 @@ func decrypt(data []byte, r byte) []byte {
 	return data
 }
 
-// Sanity check function used to compare decrypted cipher text to original plaintext. Returns true if
-
+// Sanity check function used to compare decrypted cipher text to original plaintext. Returns true if plaintext and ciphertext are the same.
 func sanityCheck(plaintext, ciphertext []byte) bool {
 	if bytes.Compare(plaintext, ciphertext) == 0 {
 		return true
@@ -98,14 +105,16 @@ func sanityCheck(plaintext, ciphertext []byte) bool {
 	return false
 }
 
+// Correct a rotation value if larger than 26.
 func createRotationValue(r int) byte {
 	return byte(r % 26)
 }
 
 func main() {
 
+	// Defining
 	rotationValue := flag.Int("r", 0, "Rotation value used to determine how many units to rotate alphabet.")
-	textString := flag.String("s", "", "Text string to be encrypted.")
+	textString := flag.String("s", "", "Plaintext string to be encrypted.")
 
 	flag.Parse()
 
