@@ -1,12 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"flag"
+	"fmt"
+	"os"
+)
 
 // Create a byte slice encryption/decryption key from a string argument.
 func createKey(s string) []byte {
 	myKey := []byte(s)
 	for i := range myKey {
-		myKey[i] -= 64
+		myKey[i] -= 65
 	}
 	return myKey
 }
@@ -52,7 +56,7 @@ func decryptByte(a, b byte) byte {
 	return a
 }
 
-// Decrypt ciphertext using the same key used for encrypting the plaintext. Return the deciphered text.
+// Decrypt ciphertext using the same key used for encrypting the cleartext. Return the deciphered text.
 func decrypt(ciphertext, key []byte) []byte {
 	keyIndex := 0
 	for i := range ciphertext {
@@ -69,13 +73,27 @@ func decrypt(ciphertext, key []byte) []byte {
 
 func main() {
 
-	keyString := "TESTKEY"
-	fmt.Printf("Cipher key:\t\t%s\n", keyString)
+	// Declaring -c and -k flags for cleartext and key respectively.
+	clearTextString := flag.String("c", "", "Cleartext string to encrypt.")
+	keyString := flag.String("k", "", "String for encryption/decryption.")
+	flag.Parse()
 
-	myKey := createKey(keyString)
+	// Exit program if either cleartext or key remain blank.
+	if *clearTextString == "" {
+		fmt.Println("Error! No cleartext provided!")
+		os.Exit(1)
+	}
+
+	if *keyString == "" {
+		fmt.Println("Error! No key provided!")
+		os.Exit(1)
+	}
+
+	fmt.Printf("Cipher key:\t\t%s\n", *keyString)
+	myKey := createKey(*keyString)
 
 	// create a cleartext message:
-	cleartext := []byte("THIS IS MY MESSAGE.")
+	cleartext := []byte(*clearTextString)
 	fmt.Printf("Cleartext message:\t%s\n", string(cleartext))
 
 	ciphertext := encrypt(cleartext, myKey)
